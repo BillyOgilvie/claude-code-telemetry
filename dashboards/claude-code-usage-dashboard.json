@@ -1,0 +1,1139 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    },
+    {
+      "name": "DS_LOKI",
+      "label": "Loki",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "loki",
+      "pluginName": "Loki"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "loki",
+      "name": "Loki",
+      "version": "1.0.0"
+    }
+  ],
+  "uid": "claude-code-usage",
+  "title": "Claude Code usage and what-if cost",
+  "description": "Token use and cost for Claude Code, with swappable price variables for what-if repricing. Price defaults are placeholders. Range totals sum each series' final counter value inside the time range, so a session that started before the range counts in full.",
+  "tags": ["claude-code", "otel"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "",
+  "annotations": {
+    "list": []
+  },
+  "templating": {
+    "list": [
+      {
+        "type": "textbox",
+        "name": "price_in",
+        "label": "USD/1M input (uncached)",
+        "query": "3",
+        "current": {
+          "text": "3",
+          "value": "3"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "3",
+            "value": "3"
+          }
+        ],
+        "hide": 0
+      },
+      {
+        "type": "textbox",
+        "name": "price_out",
+        "label": "USD/1M output",
+        "query": "15",
+        "current": {
+          "text": "15",
+          "value": "15"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "15",
+            "value": "15"
+          }
+        ],
+        "hide": 0
+      },
+      {
+        "type": "textbox",
+        "name": "price_cache_read",
+        "label": "USD/1M cache read",
+        "query": "0.3",
+        "current": {
+          "text": "0.3",
+          "value": "0.3"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "0.3",
+            "value": "0.3"
+          }
+        ],
+        "hide": 0
+      },
+      {
+        "type": "textbox",
+        "name": "price_cache_write",
+        "label": "USD/1M cache write",
+        "query": "3.75",
+        "current": {
+          "text": "3.75",
+          "value": "3.75"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "3.75",
+            "value": "3.75"
+          }
+        ],
+        "hide": 0
+      },
+      {
+        "type": "query",
+        "name": "project",
+        "label": "project",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "query": {
+          "query": "label_values(claude_code_token_usage_tokens_total, project)",
+          "refId": "v"
+        },
+        "definition": "label_values(claude_code_token_usage_tokens_total, project)",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "text": ["All"],
+          "value": ["$__all"]
+        },
+        "refresh": 2,
+        "sort": 1,
+        "hide": 0
+      },
+      {
+        "type": "query",
+        "name": "task",
+        "label": "task",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "query": {
+          "query": "label_values(claude_code_token_usage_tokens_total, task)",
+          "refId": "v"
+        },
+        "definition": "label_values(claude_code_token_usage_tokens_total, task)",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "text": ["All"],
+          "value": ["$__all"]
+        },
+        "refresh": 2,
+        "sort": 1,
+        "hide": 0
+      },
+      {
+        "type": "query",
+        "name": "run",
+        "label": "run",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "query": {
+          "query": "label_values(claude_code_token_usage_tokens_total, run)",
+          "refId": "v"
+        },
+        "definition": "label_values(claude_code_token_usage_tokens_total, run)",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "text": ["All"],
+          "value": ["$__all"]
+        },
+        "refresh": 2,
+        "sort": 1,
+        "hide": 0
+      },
+      {
+        "type": "custom",
+        "name": "query_source",
+        "label": "query_source",
+        "query": "main,subagent,auxiliary",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "text": ["All"],
+          "value": ["$__all"]
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "main",
+            "value": "main"
+          },
+          {
+            "selected": false,
+            "text": "subagent",
+            "value": "subagent"
+          },
+          {
+            "selected": false,
+            "text": "auxiliary",
+            "value": "auxiliary"
+          }
+        ],
+        "hide": 0
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Headline (selected time range)",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Claude Code cost estimate",
+      "description": "Claude Code's own estimate at API list prices for the model it used. Not a bill: a Pro plan is limit-based.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(last_over_time(claude_code_cost_usage_USD_total{project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]))",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "What-if cost at your prices",
+      "description": "All token types priced with the price_* variables above. Set them to the target model's real list prices. Defaults are placeholders.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 1,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_in) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_out) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_read) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_write)) / 1e6",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Sessions seen",
+      "description": "Distinct session series that exported in the range. Session labels may lack project/task/run for untagged sessions.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "count(last_over_time(claude_code_session_count_total{project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]))",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Cache read share of tokens",
+      "description": "Share of all tokens that were cache reads. High values make cross-provider repricing very sensitive to cache pricing.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 1,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range])) / sum(last_over_time(claude_code_token_usage_tokens_total{project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]))",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "type": "row",
+      "title": "Tokens",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 7,
+      "type": "bargauge",
+      "title": "Tokens by type",
+      "description": "input = uncached input; cacheRead / cacheCreation reported separately by Claude Code.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (type) (last_over_time(claude_code_token_usage_tokens_total{project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "legendFormat": "{{type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Tokens over time by type",
+      "description": "Change per interval. increase() ignores a series first sample, so very short sessions can show little or nothing here. Use the range totals for per-run numbers.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 6,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (type) (increase(claude_code_token_usage_tokens_total{project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__rate_interval]))",
+          "instant": false,
+          "range": true,
+          "legendFormat": "{{type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": "row",
+      "title": "Cost breakdowns",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 10,
+      "type": "table",
+      "title": "What-if cost by project / task / run",
+      "description": "Untagged sessions show project/task=untagged, run=1. Use a Group by transformation on task for mean/min/max across runs.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (project, task, run) (label_replace(label_replace(label_replace((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_in) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_out) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_read) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_write), \"project\", \"untagged\", \"project\", \"^$\"), \"task\", \"untagged\", \"task\", \"^$\"), \"run\", \"1\", \"run\", \"^$\")) / 1e6",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "Value": "What-if USD"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "What-if USD"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "What-if USD",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "type": "table",
+      "title": "What-if cost per task: mean / min / max across runs",
+      "description": "Groups the per-run costs by task. Use it to see the spread across repeated runs of the same task.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 24,
+        "h": 6
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (project, task, run) (label_replace(label_replace(label_replace((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_in) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_out) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_read) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_write), \"project\", \"untagged\", \"project\", \"^$\"), \"task\", \"untagged\", \"task\", \"^$\"), \"run\", \"1\", \"run\", \"^$\")) / 1e6",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "task": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Value": {
+                "aggregations": ["mean", "min", "max", "count"],
+                "operation": "aggregate"
+              }
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 12,
+      "type": "table",
+      "title": "What-if cost by model",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 29,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_in) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_out) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_read) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_write)) / 1e6",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "Value": "What-if USD"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "What-if USD"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "What-if USD",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "type": "table",
+      "title": "Claude Code estimate by model",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 29,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_cost_usage_USD_total{project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "Value": "Estimate USD"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Estimate USD"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Estimate USD",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "type": "table",
+      "title": "What-if cost by source / agent",
+      "description": "main = the conversation; subagent = Agent-tool sub agents (agent_name shows which); auxiliary = background requests such as session titles and prompt suggestions, possibly on a different model.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 29,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (query_source, agent_name) (label_replace((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_in) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_out) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_read) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", task=~\"$task\", run=~\"$run\", query_source=~\"$query_source\"}[$__range]) * $price_cache_write), \"agent_name\", \"-\", \"agent_name\", \"^$\")) / 1e6",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "Value": "What-if USD"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "What-if USD"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "What-if USD",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "type": "row",
+      "title": "From log events (Loki, per request)",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 37,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 16,
+      "type": "table",
+      "title": "Claude Code estimate by model / source (events)",
+      "description": "Summed api_request cost_usd, filtered by project/task/run. The query_source variable does not apply here: event source names differ from the metric ones (repl_main_thread, agent:builtin:..., generate_session_title, prompt_suggestion), so they are shown as a column instead.",
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_LOKI}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 38,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_LOKI}"
+          },
+          "expr": "sum by (model, query_source) (sum_over_time({service_name=\"claude-code\"} |= \"claude_code.api_request\" | project=~\"$project\" | task=~\"$task\" | run=~\"$run\" | unwrap cost_usd | __error__=\"\" [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "Value": "Estimate USD"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Estimate USD"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Estimate USD",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "type": "table",
+      "title": "What-if cost by model / source (events)",
+      "description": "Uses input_tokens, output_tokens, cache_read_tokens and cache_creation_tokens, filtered by project/task/run. Does not use the 5m/1h cache-write split. Should match the metric-based what-if for the same selection.",
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_LOKI}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 38,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_LOKI}"
+          },
+          "expr": "(sum by (model, query_source) (sum_over_time({service_name=\"claude-code\"} |= \"claude_code.api_request\" | project=~\"$project\" | task=~\"$task\" | run=~\"$run\" | unwrap input_tokens | __error__=\"\" [$__range])) * $price_in + sum by (model, query_source) (sum_over_time({service_name=\"claude-code\"} |= \"claude_code.api_request\" | project=~\"$project\" | task=~\"$task\" | run=~\"$run\" | unwrap output_tokens | __error__=\"\" [$__range])) * $price_out + sum by (model, query_source) (sum_over_time({service_name=\"claude-code\"} |= \"claude_code.api_request\" | project=~\"$project\" | task=~\"$task\" | run=~\"$run\" | unwrap cache_read_tokens | __error__=\"\" [$__range])) * $price_cache_read + sum by (model, query_source) (sum_over_time({service_name=\"claude-code\"} |= \"claude_code.api_request\" | project=~\"$project\" | task=~\"$task\" | run=~\"$run\" | unwrap cache_creation_tokens | __error__=\"\" [$__range])) * $price_cache_write) / 1e6",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "Value": "What-if USD"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "What-if USD"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "What-if USD",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "type": "logs",
+      "title": "Recent api_request events",
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_LOKI}"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 38,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_LOKI}"
+          },
+          "expr": "{service_name=\"claude-code\"} |= \"claude_code.api_request\" | project=~\"$project\" | task=~\"$task\" | run=~\"$run\"",
+          "queryType": "range"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "wrapLogMessage": true,
+        "enableLogDetails": true,
+        "sortOrder": "Descending"
+      }
+    }
+  ]
+}

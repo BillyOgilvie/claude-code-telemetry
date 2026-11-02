@@ -1,0 +1,19 @@
+# Local OpenTelemetry backend (collector, Prometheus, Loki, Grafana) for Claude Code telemetry.
+# Ports, bind addresses and retention come from .env (see .env.example). Defaults work without one.
+services:
+  lgtm:
+    image: grafana/otel-lgtm
+    ports:
+      # host-address:host-port:container-port. Change the host side in .env, never the container side.
+      - "${GRAFANA_BIND:-127.0.0.1}:${GRAFANA_PORT:-3300}:3000"   # Grafana
+      - "${OTLP_BIND:-127.0.0.1}:${OTLP_HTTP_PORT:-4318}:4318"    # OTLP over HTTP (Claude Code sends here)
+    environment:
+      # Keep metrics and logs long enough for a month-to-date view. The image's Prometheus default was 15 days.
+      PROMETHEUS_EXTRA_ARGS: "--storage.tsdb.retention.time=${RETENTION:-90d}"
+      LOKI_EXTRA_ARGS: "--limits.retention-period=${RETENTION:-90d}"
+    volumes:
+      - lgtm-data:/data
+    restart: unless-stopped
+
+volumes:
+  lgtm-data:
