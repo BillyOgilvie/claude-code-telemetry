@@ -10,7 +10,8 @@ services:
     environment:
       # Keep metrics and logs long enough for a month-to-date view. The image's Prometheus default was 15 days.
       PROMETHEUS_EXTRA_ARGS: "--storage.tsdb.retention.time=${RETENTION:-90d}"
-      LOKI_EXTRA_ARGS: "--limits.retention-period=${RETENTION:-90d}"
+      # Loki only deletes old logs when compactor retention is on.
+      LOKI_EXTRA_ARGS: "-store.retention=${RETENTION:-90d} -compactor.retention-enabled=true -compactor.delete-request-store=filesystem"
     volumes:
       - lgtm-data:/data
     restart: unless-stopped
