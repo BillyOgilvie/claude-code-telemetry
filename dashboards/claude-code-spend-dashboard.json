@@ -491,7 +491,7 @@
       "id": 8,
       "type": "stat",
       "title": "Metric history available (days)",
-      "description": "How far back Prometheus has data for this metric (accurate to about 6 hours). Red means the month view is incomplete: retention is shorter than a month. The Pi stack keeps 15 days by default.",
+      "description": "How far back Prometheus has data for this metric (accurate to about 6 hours). Red means the month view is incomplete: retention is shorter than a month. Prometheus keeps 15 days by default; raise its retention (--storage.tsdb.retention.time) to at least 31 days.",
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
