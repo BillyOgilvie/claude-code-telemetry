@@ -1,0 +1,2561 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    }
+  ],
+  "uid": "claude-code-tokens",
+  "title": "Claude Code token breakdown",
+  "description": "Where Claude Code tokens and cost go: by token type (input, output, cache read, cache write), by agent and sub agent, by session, and by model. Prices are derived from Claude Code's reported cost using fixed price ratios between token types (hidden variables out_mult, cache_read_mult, cache_write_mult). Range totals sum each series' final counter value inside the time range.",
+  "tags": [
+    "claude-code",
+    "otel"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "",
+  "annotations": {
+    "list": []
+  },
+  "templating": {
+    "list": [
+      {
+        "type": "textbox",
+        "name": "out_mult",
+        "label": "Output price / input price",
+        "query": "5",
+        "current": {
+          "text": "5",
+          "value": "5"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "hide": 2
+      },
+      {
+        "type": "textbox",
+        "name": "cache_read_mult",
+        "label": "Cache read price / input price",
+        "query": "0.1",
+        "current": {
+          "text": "0.1",
+          "value": "0.1"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "0.1",
+            "value": "0.1"
+          }
+        ],
+        "hide": 2
+      },
+      {
+        "type": "textbox",
+        "name": "cache_write_mult",
+        "label": "Cache write price / input price",
+        "query": "1.25",
+        "current": {
+          "text": "1.25",
+          "value": "1.25"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "1.25",
+            "value": "1.25"
+          }
+        ],
+        "hide": 2
+      },
+      {
+        "type": "query",
+        "name": "project",
+        "label": "project",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "query": {
+          "query": "label_values(claude_code_token_usage_tokens_total, project)",
+          "refId": "v"
+        },
+        "definition": "label_values(claude_code_token_usage_tokens_total, project)",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "refresh": 2,
+        "sort": 1,
+        "hide": 0
+      },
+      {
+        "type": "query",
+        "name": "model",
+        "label": "model",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "query": {
+          "query": "label_values(claude_code_token_usage_tokens_total, model)",
+          "refId": "v"
+        },
+        "definition": "label_values(claude_code_token_usage_tokens_total, model)",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "refresh": 2,
+        "sort": 1,
+        "hide": 0
+      },
+      {
+        "type": "custom",
+        "name": "query_source",
+        "label": "query_source",
+        "query": "main,subagent,auxiliary",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "main",
+            "value": "main"
+          },
+          {
+            "selected": false,
+            "text": "subagent",
+            "value": "subagent"
+          },
+          {
+            "selected": false,
+            "text": "auxiliary",
+            "value": "auxiliary"
+          }
+        ],
+        "hide": 0
+      },
+      {
+        "type": "query",
+        "name": "session",
+        "label": "session",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "query": {
+          "query": "label_values(claude_code_token_usage_tokens_total, session_id)",
+          "refId": "v"
+        },
+        "definition": "label_values(claude_code_token_usage_tokens_total, session_id)",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "refresh": 2,
+        "sort": 1,
+        "hide": 0
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Headline (selected time range)",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Total tokens",
+      "description": "All token types, including cache reads.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Cost (reported)",
+      "description": "Claude Code's own estimate at API list prices.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(last_over_time(claude_code_cost_usage_USD_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Cache hit rate",
+      "description": "cacheRead / (cacheRead + cacheCreation + uncached input). Higher is cheaper.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])) / (sum(last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])) + sum(last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])) + sum(last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])))",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Saved by cache reads",
+      "description": "What cache-read tokens would have cost at the full input price, minus what they cost. Telemetry reports only a total cost per request, not per token type. Each model's input price is derived as reported cost / ratio-weighted tokens, and the other types use fixed Anthropic price ratios (out_mult, cache_read_mult, cache_write_mult in the dashboard variables), so the per-type costs add up to the reported cost.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * (1 - $cache_read_mult) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "USD per 1M tokens",
+      "description": "Blended price across all token types. Cache reads dominate the token count, so this is far below the input price.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(last_over_time(claude_code_cost_usage_USD_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])) / (sum(last_over_time(claude_code_token_usage_tokens_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])) / 1e6)",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 3
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "Output share of cost",
+      "description": "How much of the cost is output tokens. Telemetry reports only a total cost per request, not per token type. Each model's input price is derived as reported cost / ratio-weighted tokens, and the other types use fixed Anthropic price ratios (out_mult, cache_read_mult, cache_write_mult in the dashboard variables), so the per-type costs add up to the reported cost.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum((last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))) / sum(last_over_time(claude_code_cost_usage_USD_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 8,
+      "type": "row",
+      "title": "Prices and token types",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 9,
+      "type": "table",
+      "title": "Derived prices per model (USD per 1M tokens)",
+      "description": "Prices inferred from Claude Code's reported cost. Telemetry reports only a total cost per request, not per token type. Each model's input price is derived as reported cost / ratio-weighted tokens, and the other types use fixed Anthropic price ratios (out_mult, cache_read_mult, cache_write_mult in the dashboard variables), so the per-type costs add up to the reported cost. A model with fast mode, long-context or other premium requests will come out slightly higher than its list price.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 24,
+        "h": 5
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "(sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))) * 1e6",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "(sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))) * 1e6 * $out_mult",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "(sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))) * 1e6 * $cache_read_mult",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "(sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))) * 1e6 * $cache_write_mult",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "model",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Time 5": true,
+              "Time 6": true,
+              "Time 7": true,
+              "Time 8": true,
+              "Time 9": true
+            },
+            "renameByName": {
+              "Value #A": "Input USD/1M",
+              "Value #B": "Output USD/1M",
+              "Value #C": "Cache read USD/1M",
+              "Value #D": "Cache write USD/1M",
+              "model": "Model"
+            },
+            "indexByName": {
+              "model": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Input USD/1M"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Output USD/1M"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache read USD/1M"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache write USD/1M"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Input USD/1M",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "type": "piechart",
+      "title": "Tokens by type",
+      "description": "Cache reads are usually the bulk of the volume.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 11,
+        "w": 6,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (type) (last_over_time(claude_code_token_usage_tokens_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "legendFormat": "{{type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "donut",
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "id": 11,
+      "type": "piechart",
+      "title": "Cost by type",
+      "description": "Where the money goes once each type is priced separately. Telemetry reports only a total cost per request, not per token type. Each model's input price is derived as reported cost / ratio-weighted tokens, and the other types use fixed Anthropic price ratios (out_mult, cache_read_mult, cache_write_mult in the dashboard variables), so the per-type costs add up to the reported cost.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 11,
+        "w": 6,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (type) (((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))))",
+          "instant": true,
+          "range": false,
+          "legendFormat": "{{type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "donut",
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "id": 12,
+      "type": "table",
+      "title": "Per token type",
+      "description": "Tokens, cost and share of cost per type. Telemetry reports only a total cost per request, not per token type. Each model's input price is derived as reported cost / ratio-weighted tokens, and the other types use fixed Anthropic price ratios (out_mult, cache_read_mult, cache_write_mult in the dashboard variables), so the per-type costs add up to the reported cost.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 11,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (type) (last_over_time(claude_code_token_usage_tokens_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (type) (((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (type) (((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))) / scalar(sum(((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "type",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Time 5": true,
+              "Time 6": true,
+              "Time 7": true,
+              "Time 8": true,
+              "Time 9": true
+            },
+            "renameByName": {
+              "type": "Type",
+              "Value #A": "Tokens",
+              "Value #B": "Cost",
+              "Value #C": "Share of cost"
+            },
+            "indexByName": {
+              "type": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tokens"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cost"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Share of cost"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Cost",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Cost over time by type",
+      "description": "increase() ignores a series' first sample, so very short sessions can show little here. Use the range totals for per-session numbers.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 19,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (type) (((increase(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (increase(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (increase(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (increase(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))))",
+          "instant": false,
+          "range": true,
+          "legendFormat": "{{type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Tokens over time by type",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 19,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (type) (increase(claude_code_token_usage_tokens_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]))",
+          "instant": false,
+          "range": true,
+          "legendFormat": "{{type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "type": "row",
+      "title": "By agent / sub agent",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 27,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 16,
+      "type": "table",
+      "title": "Agents: tokens and cost",
+      "description": "main = the conversation; subagent / <name> = Agent-tool sub agents; auxiliary = background requests (titles, suggestions). Real agent names only appear with OTEL_LOG_TOOL_DETAILS on (see README); otherwise they show as 'custom'. Telemetry reports only a total cost per request, not per token type. Each model's input price is derived as reported cost / ratio-weighted tokens, and the other types use fixed Anthropic price ratios (out_mult, cache_read_mult, cache_write_mult in the dashboard variables), so the per-type costs add up to the reported cost.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 28,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) (last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) (last_over_time(claude_code_token_usage_tokens_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \")) / 1e6",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "G",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) ((last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "H",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) ((last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "I",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) ((last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "J",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) (last_over_time(claude_code_cost_usage_USD_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "agent",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Time 5": true,
+              "Time 6": true,
+              "Time 7": true,
+              "Time 8": true,
+              "Time 9": true
+            },
+            "renameByName": {
+              "Value #A": "Input",
+              "Value #B": "Output",
+              "Value #C": "Cache read",
+              "Value #D": "Cache write",
+              "Value #E": "Total (M tokens)",
+              "Value #F": "Input $",
+              "Value #G": "Output $",
+              "Value #H": "Cache read $",
+              "Value #I": "Cache write $",
+              "Value #J": "Cost (reported)",
+              "agent": "Agent"
+            },
+            "indexByName": {
+              "agent": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4,
+              "Value #E": 5,
+              "Value #F": 6,
+              "Value #G": 7,
+              "Value #H": 8,
+              "Value #I": 9,
+              "Value #J": 10
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "alias": "USD per 1M tokens",
+            "binary": {
+              "left": "Cost (reported)",
+              "operator": "/",
+              "right": "Total (M tokens)"
+            },
+            "replaceFields": false
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Input"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Output"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache read"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache write"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total (M tokens)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Input $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Output $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache read $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache write $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cost (reported)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "USD per 1M tokens"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Cost (reported)",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "type": "piechart",
+      "title": "Cost by agent",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 37,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) (((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": true,
+          "range": false,
+          "legendFormat": "{{agent}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "donut",
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "id": 18,
+      "type": "timeseries",
+      "title": "Cost over time by agent",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 37,
+        "w": 16,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (agent) (label_replace(label_join(sum by (query_source, agent_name) (((increase(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (increase(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (increase(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (increase(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))), \"agent\", \" / \", \"query_source\", \"agent_name\"), \"agent\", \"$1\", \"agent\", \"(.*) / \"))",
+          "instant": false,
+          "range": true,
+          "legendFormat": "{{agent}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "type": "row",
+      "title": "By session",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 45,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 20,
+      "type": "table",
+      "title": "Sessions: tokens and cost",
+      "description": "Every session with activity in the range. Click a column header to sort. Use the session variable above to filter the whole dashboard to one session. Telemetry reports only a total cost per request, not per token type. Each model's input price is derived as reported cost / ratio-weighted tokens, and the other types use fixed Anthropic price ratios (out_mult, cache_read_mult, cache_write_mult in the dashboard variables), so the per-type costs add up to the reported cost.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 46,
+        "w": 24,
+        "h": 10
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) (last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) (last_over_time(claude_code_token_usage_tokens_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])) / 1e6",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "G",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) ((last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "H",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) ((last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "I",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) ((last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "J",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (session_id) (last_over_time(claude_code_cost_usage_USD_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "session_id",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Time 5": true,
+              "Time 6": true,
+              "Time 7": true,
+              "Time 8": true,
+              "Time 9": true
+            },
+            "renameByName": {
+              "Value #A": "Input",
+              "Value #B": "Output",
+              "Value #C": "Cache read",
+              "Value #D": "Cache write",
+              "Value #E": "Total (M tokens)",
+              "Value #F": "Input $",
+              "Value #G": "Output $",
+              "Value #H": "Cache read $",
+              "Value #I": "Cache write $",
+              "Value #J": "Cost (reported)",
+              "session_id": "Session"
+            },
+            "indexByName": {
+              "session_id": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4,
+              "Value #E": 5,
+              "Value #F": 6,
+              "Value #G": 7,
+              "Value #H": 8,
+              "Value #I": 9,
+              "Value #J": 10
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "alias": "USD per 1M tokens",
+            "binary": {
+              "left": "Cost (reported)",
+              "operator": "/",
+              "right": "Total (M tokens)"
+            },
+            "replaceFields": false
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Input"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Output"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache read"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache write"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total (M tokens)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Input $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Output $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache read $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache write $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cost (reported)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "USD per 1M tokens"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Cost (reported)",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "type": "table",
+      "title": "Top 15 session / agent pairs by cost",
+      "description": "Which agent inside which session spent the most.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 56,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "topk(15, sum by (session_id, query_source, agent_name) (label_replace(((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult))))), \"agent_name\", \"-\", \"agent_name\", \"^$\")))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "session_id": "Session",
+              "query_source": "Source",
+              "agent_name": "Agent",
+              "Value": "Cost"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cost"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Cost",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "type": "timeseries",
+      "title": "Cost over time, top 8 sessions",
+      "description": "topk is evaluated per step, so a session shows only while it is in the top 8.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 56,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "topk(8, sum by (session_id) (((increase(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (increase(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (increase(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))) or (increase(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__rate_interval]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))))",
+          "instant": false,
+          "range": true,
+          "legendFormat": "{{session_id}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "type": "row",
+      "title": "By model",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 65,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 24,
+      "type": "table",
+      "title": "Models: tokens and cost",
+      "description": "Telemetry reports only a total cost per request, not per token type. Each model's input price is derived as reported cost / ratio-weighted tokens, and the other types use fixed Anthropic price ratios (out_mult, cache_read_mult, cache_write_mult in the dashboard variables), so the per-type costs add up to the reported cost.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 66,
+        "w": 24,
+        "h": 7
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range])) / 1e6",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "G",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"output\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $out_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "H",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_read_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "I",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]) * $cache_write_mult * on (model) group_left () (sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range])) / sum by (model) ((last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range])) or (last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]) * $out_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]) * $cache_read_mult) or (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\"}[$__range]) * $cache_write_mult)))))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "J",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_cost_usage_USD_total{project=~\"$project\", model=~\"$model\", query_source=~\"$query_source\", session_id=~\"$session\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "model",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Time 5": true,
+              "Time 6": true,
+              "Time 7": true,
+              "Time 8": true,
+              "Time 9": true
+            },
+            "renameByName": {
+              "Value #A": "Input",
+              "Value #B": "Output",
+              "Value #C": "Cache read",
+              "Value #D": "Cache write",
+              "Value #E": "Total (M tokens)",
+              "Value #F": "Input $",
+              "Value #G": "Output $",
+              "Value #H": "Cache read $",
+              "Value #I": "Cache write $",
+              "Value #J": "Cost (reported)",
+              "model": "Model"
+            },
+            "indexByName": {
+              "model": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4,
+              "Value #E": 5,
+              "Value #F": 6,
+              "Value #G": 7,
+              "Value #H": 8,
+              "Value #I": 9,
+              "Value #J": 10
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "alias": "USD per 1M tokens",
+            "binary": {
+              "left": "Cost (reported)",
+              "operator": "/",
+              "right": "Total (M tokens)"
+            },
+            "replaceFields": false
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Input"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Output"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache read"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache write"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total (M tokens)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Input $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Output $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache read $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache write $"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cost (reported)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "USD per 1M tokens"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Cost (reported)",
+            "desc": true
+          }
+        ]
+      }
+    }
+  ]
+}

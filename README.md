@@ -1,6 +1,6 @@
 # claude-code-grafana
 
-Track Claude Code token use and estimated spend in Grafana, using Claude Code's built-in OpenTelemetry export. Two dashboards: month-to-date spend, and usage with what-if pricing for other models.
+Track Claude Code token use and estimated spend in Grafana, using Claude Code's built-in OpenTelemetry export. Three dashboards: month-to-date spend, usage with what-if pricing for other models, and a token breakdown by type, agent, session and model.
 
 Costs are Claude Code's own estimate at API list prices, not an invoice. Claude Code only: claude.ai chat is not included.
 
@@ -35,6 +35,7 @@ To also record prompt text, responses and tool details, use `settings.example.lo
 ## Using the dashboards
 
 - **Spend** (`claude-code-spend-dashboard.json`): set the monthly budget in the box at the top and keep the time range on "This month so far". The month is UTC.
+- **Token breakdown** (`claude-code-tokens-dashboard.json`): input, output, cache read and cache write tokens and their cost, split by agent / sub agent, session and model. Claude Code reports only a total cost per request, so no prices are entered: each model's input price is derived from the reported cost, and the other types use fixed price ratios (output 5x, cache read 0.1x, cache write 1.25x of input; hidden dashboard variables `out_mult`, `cache_read_mult`, `cache_write_mult`, editable under dashboard settings, Variables). The per-type costs therefore add up to the reported cost, and the "Derived prices per model" table shows the resulting USD per 1M tokens. Premium requests (fast mode, long context) nudge the derived price slightly above list. Real sub agent names need `OTEL_LOG_TOOL_DETAILS` (see Notes); otherwise they show as `custom`.
 - **Usage** (`claude-code-usage-dashboard.json`): the four `USD/1M` boxes default to placeholder prices. Enter the target model's real per-million prices to get a what-if cost. Cache write is normally the input price if the provider has no separate write charge. To keep your prices, save the dashboard and tick "Update default variable values".
 
 ## Tagging sessions (optional)
